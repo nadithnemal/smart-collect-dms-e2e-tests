@@ -1,4 +1,6 @@
+
 // @ts-check
+import 'dotenv/config';
 import { defineConfig, devices } from '@playwright/test';
 
 /**
@@ -17,6 +19,8 @@ export default defineConfig({
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
+  expect: { timeout: 15_000 }, 
+  //Wait up to 15 seconds for each expect() check, because the DMS dev server is slow on first load
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
