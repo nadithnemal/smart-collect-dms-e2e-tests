@@ -1,24 +1,22 @@
 import { test, expect } from '@playwright/test';
+import { LoginPage } from '../pages/LoginPage.js';
 
-// Login tests must start logged OUT (this matters after Step 2)
+// Login tests must start logged OUT
 test.use({ storageState: { cookies: [], origins: [] } });
 
 const EMAIL = process.env.TEST_USER_EMAIL;
 const PASSWORD = process.env.TEST_USER_PASSWORD;
 
 test.describe('Login', () => {
+  let loginPage;
+
   test.beforeEach(async ({ page }) => {
-    await page.goto('/login');
+    loginPage = new LoginPage(page);
+    await loginPage.goto();
   });
 
-  const emailField = (page) => page.getByRole('textbox', { name: 'Email address' });
-  const passwordField = (page) => page.getByPlaceholder('••••••••');
-  const signInButton = (page) => page.getByRole('button', { name: 'Sign in' });
-
   test('valid login and logout', async ({ page }) => {
-    await emailField(page).fill(EMAIL);
-    await passwordField(page).fill(PASSWORD);
-    await signInButton(page).click();
+    await loginPage.login(EMAIL, PASSWORD);
 
     await expect(page).not.toHaveURL(/login/);
     const userMenu = page.getByRole('button', { name: /Akash Sandeepa/ });
@@ -30,31 +28,27 @@ test.describe('Login', () => {
   });
 
   test('wrong password is rejected', async ({ page }) => {
-    await emailField(page).fill(EMAIL);
-    await passwordField(page).fill('Wrong@12345');
-    await signInButton(page).click();
+    await loginPage.login(EMAIL, 'Wrong@12345');
 
     await expect(page).toHaveURL(/login/);
-    await expect(page.getByText(/invalid|incorrect/i)).toBeVisible(); // CHANGE to the real error text
+    await expect(page.getByText(/invalid|incorrect/i)).toBeVisible(); // use your real error text
   });
 
   test('unknown email is rejected', async ({ page }) => {
-    await emailField(page).fill('nobody@example.com');
-    await passwordField(page).fill('Wrong@12345');
-    await signInButton(page).click();
+    await loginPage.login('nobody@example.com', 'Wrong@12345');
 
     await expect(page).toHaveURL(/login/);
-    await expect(page.getByText(/invalid|incorrect/i)).toBeVisible(); // CHANGE to the real error text
+    await expect(page.getByText(/invalid|incorrect/i)).toBeVisible(); // use your real error text
   });
 
   test('empty form does not log in', async ({ page }) => {
-    await signInButton(page).click();
+    await loginPage.signInButton.click();
 
     await expect(page).toHaveURL(/login/);
   });
 });
 
 test('protected page redirects to login when logged out', async ({ page }) => {
-  await page.goto('/templates'); // CHANGE to a real page path in your app
+  await page.goto('/templates');
   await expect(page).toHaveURL(/login/);
 });
