@@ -61,4 +61,19 @@ test.describe('Templates', () => {
     await expect(templates.deactivateButton).toBeVisible();
     await expect(templates.publishButton).toBeHidden();
   });
+
+  test('activating an inactive template makes it active again', async ({ page }) => {
+    await templates.createTemplate(uniqueName());
+    await templates.saveContent('automation activate content');
+    await templates.publish();
+    await templates.deactivate();
+    await expect(templates.activateButton).toBeVisible();
+
+    await templates.activate();
+
+    await expect(page.getByText('Active', { exact: true })).toBeVisible();
+    await expect(templates.deactivateButton).toBeVisible();
+    await expect(templates.activateButton).toBeHidden();
+    await expect(page.getByText('Editing this template will create a new Draft version')).toBeVisible();
+  });
 });

@@ -20,6 +20,10 @@ export class TemplatesPage {
     await this.page.goto('/templates');
   }
 
+  async activate() {
+    await this.activateButton.click();
+  }
+
   async deactivate() {
     await this.deactivateButton.click();
   }
