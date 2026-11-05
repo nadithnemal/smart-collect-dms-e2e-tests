@@ -69,4 +69,13 @@ export class TemplatesPage {
     const dialog = this.page.getByRole('dialog', { name: `Roll back to Version ${version}?` });
     await dialog.getByRole('button', { name: 'Rollback', exact: true }).click();
   }
+
+  templateCell(name) {
+    return this.page.getByRole('cell', { name, exact: true });
+  }
+
+  async deleteTemplate(name) {
+    await this.page.getByRole('button', { name: `Delete ${name}` }).click();
+    await this.page.getByRole('button', { name: 'Delete', exact: true }).click();
+  }
 }

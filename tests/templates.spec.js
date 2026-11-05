@@ -112,5 +112,19 @@ test.describe('Templates', () => {
     await expect(page.getByText('Version 3', { exact: true })).toBeVisible();
     await expect(templates.editor.first()).toContainText('automation version 1 content');
   await expect(templates.editor.first()).not.toContainText('automation version 2 content');
-});
+  });
+
+  test('deleting an active template removes it from the list', async ({ page }) => {
+    const name = uniqueName();
+    await templates.createTemplate(name);
+    await templates.saveContent('automation delete content');
+    await templates.publish();
+
+    await templates.goto();
+    await expect(templates.templateCell(name)).toBeVisible();
+
+    await templates.deleteTemplate(name);
+
+    await expect(templates.templateCell(name)).toHaveCount(0);
+  });
 });
