@@ -13,10 +13,15 @@ export class TemplatesPage {
     this.titleField = page.getByRole('main').getByRole('textbox').first(); // template name box in the editor header
     this.publishDialog = page.getByRole('dialog', { name: 'Publish Template' });
     this.deactivateButton = page.getByRole('button', { name: 'Deactivate' });
+    this.activateButton = page.getByRole('button', { name: 'Activate', exact: true });
   }
 
   async goto() {
     await this.page.goto('/templates');
+  }
+
+  async deactivate() {
+    await this.deactivateButton.click();
   }
 
   async filterByStatus(status) {

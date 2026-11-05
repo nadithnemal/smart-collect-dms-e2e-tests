@@ -40,6 +40,18 @@ test.describe('Templates', () => {
     await expect(templates.editor.first()).toContainText('automation test content');
   });
 
+  test('deactivating an active template makes it inactive', async ({ page }) => {
+    await templates.createTemplate(uniqueName());
+    await templates.saveContent('automation deactivate content');
+    await templates.publish();
+    await expect(templates.deactivateButton).toBeVisible();
+
+    await templates.deactivate();
+
+    await expect(page.getByText('Inactive', { exact: true })).toBeVisible();
+    await expect(templates.deactivateButton).toBeHidden();
+  });
+
   test('publishing a draft makes it active', async ({ page }) => {
     await templates.createTemplate(uniqueName());
     await templates.saveContent('automation publish content');
