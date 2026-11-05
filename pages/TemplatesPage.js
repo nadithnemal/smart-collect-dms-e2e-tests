@@ -11,6 +11,8 @@ export class TemplatesPage {
     this.saveButton = page.getByRole('button', { name: 'Save', exact: true });
     this.publishButton = page.getByRole('button', { name: 'Publish', exact: true });
     this.titleField = page.getByRole('main').getByRole('textbox').first(); // template name box in the editor header
+    this.publishDialog = page.getByRole('dialog', { name: 'Publish Template' });
+    this.deactivateButton = page.getByRole('button', { name: 'Deactivate' });
   }
 
   async goto() {
@@ -26,6 +28,11 @@ export class TemplatesPage {
     await this.nameField.fill(name);
     await this.createButton.click();
     await expect(this.page).toHaveURL(/\/templates\/\d+/); // editor opened
+  }
+
+  async publish() {
+    await this.publishButton.click();
+    await this.publishDialog.getByRole('button', { name: 'Publish' }).click();
   }
 
   async saveContent(text) {

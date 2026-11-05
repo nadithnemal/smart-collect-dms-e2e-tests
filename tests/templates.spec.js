@@ -39,4 +39,14 @@ test.describe('Templates', () => {
     await page.reload();
     await expect(templates.editor.first()).toContainText('automation test content');
   });
+
+  test('publishing a draft makes it active', async ({ page }) => {
+    await templates.createTemplate(uniqueName());
+    await templates.saveContent('automation publish content');
+    await templates.publish();
+
+    await expect(page.getByText('Active', { exact: true })).toBeVisible();
+    await expect(templates.deactivateButton).toBeVisible();
+    await expect(templates.publishButton).toBeHidden();
+  });
 });
