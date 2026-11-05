@@ -18,6 +18,7 @@ export class TemplatesPage {
     this.saveAsNewVersionButton = page.getByRole('button', { name: 'Save as New Version' });
     this.versionNoteField = page.getByRole('textbox', { name: /What changed/ });
     this.saveVersionButton = page.getByRole('dialog').getByRole('button', { name: /^Save Version/ });
+    this.rollbackButton = page.getByRole('button', { name: 'Rollback', exact: true });
   }
 
   async goto() {
@@ -61,5 +62,11 @@ export class TemplatesPage {
     await this.saveAsNewVersionButton.click();
     await this.versionNoteField.fill(note);
     await this.saveVersionButton.click();
+  }
+
+  async rollbackTo(version) {
+    await this.rollbackButton.click();
+    const dialog = this.page.getByRole('dialog', { name: `Roll back to Version ${version}?` });
+    await dialog.getByRole('button', { name: 'Rollback', exact: true }).click();
   }
 }

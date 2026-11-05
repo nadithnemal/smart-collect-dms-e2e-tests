@@ -96,4 +96,21 @@ test.describe('Templates', () => {
     await expect(page.getByText(note)).toBeVisible();
     await expect(page.getByText('Current', { exact: true })).toBeVisible();
   });
+
+  test('rollback to version 1 restores its content and adds a new version', async ({ page }) => {
+    await templates.createTemplate(uniqueName());
+    await templates.saveContent('automation version 1 content');
+    await templates.publish();
+    await templates.editor.first().fill('automation version 2 content');
+    await templates.saveAsNewVersion(`AUTO version note ${Date.now()}`);
+    await templates.versionHistoryTab.click();
+    await expect(page.getByText('Version 2', { exact: true })).toBeVisible();
+
+    await templates.rollbackTo(1);
+
+    await templates.versionHistoryTab.click();
+    await expect(page.getByText('Version 3', { exact: true })).toBeVisible();
+    await expect(templates.editor.first()).toContainText('automation version 1 content');
+  await expect(templates.editor.first()).not.toContainText('automation version 2 content');
+});
 });
