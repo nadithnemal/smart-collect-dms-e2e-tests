@@ -14,6 +14,10 @@ export class TemplatesPage {
     this.publishDialog = page.getByRole('dialog', { name: 'Publish Template' });
     this.deactivateButton = page.getByRole('button', { name: 'Deactivate' });
     this.activateButton = page.getByRole('button', { name: 'Activate', exact: true });
+    this.versionHistoryTab = page.getByRole('button', { name: 'Version History' });
+    this.saveAsNewVersionButton = page.getByRole('button', { name: 'Save as New Version' });
+    this.versionNoteField = page.getByRole('textbox', { name: /What changed/ });
+    this.saveVersionButton = page.getByRole('dialog').getByRole('button', { name: /^Save Version/ });
   }
 
   async goto() {
@@ -51,5 +55,11 @@ export class TemplatesPage {
     );
     await this.saveButton.click();
     await saved; // wait until the server accepted the save
+  }
+
+  async saveAsNewVersion(note) {
+    await this.saveAsNewVersionButton.click();
+    await this.versionNoteField.fill(note);
+    await this.saveVersionButton.click();
   }
 }

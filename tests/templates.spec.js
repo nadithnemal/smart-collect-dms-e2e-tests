@@ -76,4 +76,24 @@ test.describe('Templates', () => {
     await expect(templates.activateButton).toBeHidden();
     await expect(page.getByText('Editing this template will create a new Draft version')).toBeVisible();
   });
+
+  test('save as new version turns an active template into a draft with version 2', async ({ page }) => {
+    const note = `AUTO version note ${Date.now()}`;
+
+    await templates.createTemplate(uniqueName());
+    await templates.saveContent('automation version 1 content');
+    await templates.publish();
+    await expect(templates.deactivateButton).toBeVisible();
+
+    await templates.editor.first().fill('automation version 2 content');
+    await templates.saveAsNewVersion(note);
+
+    await expect(page.getByText('Draft', { exact: true })).toBeVisible();
+    await expect(templates.publishButton).toBeVisible();
+
+    await templates.versionHistoryTab.click();
+    await expect(page.getByText('Version 2', { exact: true })).toBeVisible();
+    await expect(page.getByText(note)).toBeVisible();
+    await expect(page.getByText('Current', { exact: true })).toBeVisible();
+  });
 });
