@@ -7,6 +7,7 @@ export class AuditLogsPage {
     this.searchField = page.getByRole('textbox', { name: 'Search' });
     this.entryDialog = page.getByRole('dialog', { name: 'Audit entry' });
     this.closeDialogButton = page.getByRole('button', { name: 'Close dialog' });
+
   }
 
   async goto() {
@@ -17,6 +18,10 @@ export class AuditLogsPage {
   get firstEntryRow() {
     return this.page.getByRole('row').filter({ has: this.page.getByRole('button') }).first();
   }
+
+    get dataRows() {
+        return this.page.getByRole('row').filter({ has: this.page.getByRole('button', { name: /View/ }) });
+    }
 
   async openFirstEntry() {
     await this.firstEntryRow.getByRole('button').click();

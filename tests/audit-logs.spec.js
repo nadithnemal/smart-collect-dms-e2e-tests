@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { AuditLogsPage } from '../pages/AuditLogsPage.js';
+import { TemplatesPage } from '../pages/TemplatesPage.js';
 
 test.describe('Audit Logs', () => {
   let audit;
@@ -42,5 +43,32 @@ test.describe('Audit Logs', () => {
 
     await audit.closeDialogButton.click();
     await expect(audit.entryDialog).toBeHidden();
+  });
+
+  test('filtering by "Created template" shows only that action', async () => {
+  await audit.actionFilter.selectOption('template_created');
+
+  await expect(audit.dataRows.first()).toContainText('Created template');
+  await expect(audit.dataRows.filter({ hasNotText: 'Created template' })).toHaveCount(0);
+});
+
+
+});
+
+test.describe('Audit Logs entries from actions', () => {
+  test('creating a template adds a "Created template" entry', async ({ page }) => {
+    const audit = new AuditLogsPage(page);
+    const templates = new TemplatesPage(page);
+    const name = `AUTO-Audit Template ${Date.now()}`;
+
+    await templates.goto();
+    await templates.createTemplate(name);
+
+    await audit.goto();
+    await audit.searchField.fill(name);
+    await audit.searchField.press('Enter');
+
+    const entries = audit.dataRows.filter({ hasText: name });
+    await expect(entries.filter({ hasText: 'Created template' })).toHaveCount(1);
   });
 });
