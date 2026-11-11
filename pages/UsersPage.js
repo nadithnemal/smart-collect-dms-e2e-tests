@@ -22,4 +22,10 @@ export class UsersPage {
     await this.emailField.fill(email);
     await this.createAccountButton.click(); // privilege group stays on the default
   }
+
+    async deleteUser(fullName, email) {
+        await this.page.getByRole('button', { name: 'Delete', description: `Delete ${fullName}`, exact: true }).click();
+        await this.page.getByRole('textbox', { name: /Type the account email/ }).fill(email);
+        await this.page.getByRole('button', { name: 'Delete permanently' }).click();
+    }
 }

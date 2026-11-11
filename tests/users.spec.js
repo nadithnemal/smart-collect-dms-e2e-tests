@@ -52,4 +52,17 @@ test.describe('User Accounts', () => {
 
     await newContext.close();
   });
+
+    test('deleting a user removes the account from the list', async ({ page }) => {
+        const email = uniqueEmail();
+        const fullName = `AUTO Delete ${Date.now()}`;
+
+        await users.createUser(fullName, email);
+        await users.doneButton.click();
+        await expect(page.getByText(email)).toBeVisible();
+
+        await users.deleteUser(fullName, email);
+
+        await expect(page.getByText(email)).toHaveCount(0);
+    });
 });
