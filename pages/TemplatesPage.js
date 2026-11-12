@@ -19,6 +19,8 @@ export class TemplatesPage {
     this.versionNoteField = page.getByRole('textbox', { name: /What changed/ });
     this.saveVersionButton = page.getByRole('dialog').getByRole('button', { name: /^Save Version/ });
     this.rollbackButton = page.getByRole('button', { name: 'Rollback', exact: true });
+    this.submitForApprovalButton = page.getByRole('button', { name: 'Submit for Approval' });
+    this.submitConfirmButton = page.getByRole('button', { name: 'Submit', exact: true });
   }
 
   async goto() {
@@ -78,4 +80,14 @@ export class TemplatesPage {
     await this.page.getByRole('button', { name: `Delete ${name}` }).click();
     await this.page.getByRole('button', { name: 'Delete', exact: true }).click();
   }
+
+  async submitForApproval() {
+  await this.submitForApprovalButton.click();
+  const submitted = this.page.waitForResponse(
+    (r) => r.url().includes('/submit') && r.request().method() === 'POST'
+  );
+  await this.submitConfirmButton.click();
+  const response = await submitted;
+  expect(response.ok()).toBeTruthy();
+}
 }
