@@ -127,4 +127,19 @@ test.describe('Approval decisions', () => {
     await creatorSees(creator.page, name, 'rejected', 'Rejected');
     await creator.context.close();
   });
+
+    test('request changes is disabled until a comment is typed', async ({ browser, baseURL }) => {
+    const name = uniqueName();
+    await submitAsCreator(browser, baseURL, name);
+
+    const approver = await reviewAsApprover(browser, baseURL, name);
+    const commentBox = approver.page.getByRole('textbox', { name: /Leave a comment/ });
+
+    await expect(approver.queue.requestChangesButton).toBeDisabled();
+
+    await commentBox.fill('automation: please fix the wording');
+    await expect(approver.queue.requestChangesButton).toBeEnabled();
+
+    await approver.context.close();
+  });
 });
