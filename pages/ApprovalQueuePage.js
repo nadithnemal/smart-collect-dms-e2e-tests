@@ -1,3 +1,5 @@
+import { expect } from '@playwright/test';
+
 export class ApprovalQueuePage {
   constructor(page) {
     this.page = page;
@@ -9,13 +11,17 @@ export class ApprovalQueuePage {
 
   async openFromSidebar() {
     await this.sidebarLink.click();
+    await expect(this.page).toHaveURL(/approvals/); // wait until the queue page is really open
+  }
+
+  async review(name) {
+    const reviewButton = this.row(name).getByRole('button', { name: 'Review' });
+    await expect(reviewButton).toBeVisible(); // waits for the queue to load the item
+    await reviewButton.click();
   }
 
   row(name) {
     return this.page.getByRole('row').filter({ hasText: name });
   }
 
-  async review(name) {
-    await this.row(name).getByRole('button').click();
-  }
 }
