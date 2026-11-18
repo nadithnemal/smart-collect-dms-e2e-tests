@@ -39,4 +39,36 @@ test.describe('E-Signatures', () => {
 
     await signatures.cancelButton.click();
   });
+
+  test('tabs filter requests by status', async () => {
+  await expect(signatures.request(15)).toBeVisible();
+
+  for (const tab of ['Sent', 'Viewed', 'Rejected', 'Expired']) {
+    await signatures.tab(tab).click();
+    await expect(signatures.request(15)).toBeHidden();
+  }
+
+  await signatures.tab('Signed').click();
+  await expect(signatures.request(15)).toBeVisible();
+
+  await signatures.tab('All').click();
+  await expect(signatures.request(15)).toBeVisible();
+});
+
+test('expanding a request shows its signing details', async () => {
+  await expect(signatures.request(15)).toBeVisible();
+  await expect(signatures.agreementIds).toHaveCount(0);
+
+  await signatures.expandButtons.first().click();
+
+  await expect(signatures.agreementIds).toHaveCount(1);
+});
+
+test('refresh keeps the list', async () => {
+  await expect(signatures.request(15)).toBeVisible();
+
+  await signatures.refreshButton.click();
+
+  await expect(signatures.request(15)).toBeVisible();
+});
 });
