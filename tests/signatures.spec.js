@@ -71,4 +71,23 @@ test('refresh keeps the list', async () => {
 
   await expect(signatures.request(15)).toBeVisible();
 });
+
+test('searching by request number shows only that request', async () => {
+  await expect(signatures.request(15)).toBeVisible();
+  await expect(signatures.request(14)).toBeVisible();
+
+  await signatures.searchField.fill('15');
+
+  await expect(signatures.request(15)).toBeVisible();
+  await expect(signatures.request(14)).toBeHidden();
+  await expect(signatures.request(13)).toBeHidden();
+});
+
+test('searching for something that does not exist shows no requests', async () => {
+  await signatures.searchField.fill('zzzz');
+
+  await expect(signatures.request(15)).toBeHidden();
+  await expect(signatures.request(14)).toBeHidden();
+  await expect(signatures.request(13)).toBeHidden();
+});
 });

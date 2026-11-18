@@ -11,6 +11,7 @@ export class SignaturesPage {
     this.cancelButton = this.dialog.getByRole('button', { name: 'Cancel' });
     this.expandButtons = page.getByRole('button', { name: 'Expand' });
     this.agreementIds = page.getByText(/Agreement ID/);
+    this.searchField = page.getByRole('searchbox', { name: /Search by ID/ });
   }
 
   async goto() {
